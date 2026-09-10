@@ -1,20 +1,39 @@
-﻿using System.Data.Common;
+﻿using System.Buffers;
+using System.Data.Common;
 using System.Security.Cryptography;
 
 class Program
 {
 
+  public static void DisplaySession(string sessionName, DateTime sessionDate, int sessionDuration)
+  {
+    Console.WriteLine(sessionName);
+    Console.WriteLine($"Date: {sessionDate.ToString("dd MMMM yyyy")}");
+    Console.WriteLine($"Start Time: {sessionDate.ToString("hh:mm tt")}");
+    Console.WriteLine($"Duration: {sessionDuration} minutes");
+    Console.WriteLine();
+  }
   public static void DisplayAllSessions(string[] sessionNames, DateTime[] sessionDates, int[] sessionDurations)
   {
     int numberOfSessions = sessionNames.Length;
 
     for(int i = 0 ; i < numberOfSessions ; i++)
     {
-      Console.WriteLine($"{i + 1}. {sessionNames[i]}");
-      Console.WriteLine($"Date: {sessionDates[i].ToString("dd MMMM yyyy")}");
-      Console.WriteLine($"Start Time: {sessionDates[i].ToString("hh:mm tt")}");
-      Console.WriteLine($"Duration: {sessionDurations[i]} minutes");
-      Console.WriteLine();
+      Console.Write($"{i + 1}. ");
+      DisplaySession(sessionNames[i], sessionDates[i], sessionDurations[i]);
+    }
+  }
+
+  public static void SearchSessionByName(string[] sessionNames, DateTime[] sessionDates, int[] sessionDurations, string sessionName)
+  {
+    Predicate<string> equalsTargetSession = name => name == sessionName;
+    int index = Array.FindIndex(sessionNames, 0, sessionNames.Length, equalsTargetSession);
+    if(index != -1)
+    {
+      DisplaySession(sessionNames[index], sessionDates[index], sessionDurations[index]);
+    } else
+    {
+      Console.WriteLine("Session not found.");
     }
   }
   public static void Main(string[] args)
@@ -47,5 +66,7 @@ class Program
     };
 
     DisplayAllSessions(sessionNames, sessionDates, sessionDurations);
+
+    SearchSessionByName(sessionNames, sessionDates, sessionDurations, "something");
   }
 }
