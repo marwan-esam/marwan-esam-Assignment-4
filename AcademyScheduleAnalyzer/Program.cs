@@ -1,5 +1,22 @@
-﻿class Program
+﻿using System.Data.Common;
+using System.Security.Cryptography;
+
+class Program
 {
+
+  public static void DisplayAllSessions(string[] sessionNames, DateTime[] sessionDates, int[] sessionDurations)
+  {
+    int numberOfSessions = sessionNames.Length;
+
+    for(int i = 0 ; i < numberOfSessions ; i++)
+    {
+      Console.WriteLine($"{i + 1}. {sessionNames[i]}");
+      Console.WriteLine($"Date: {sessionDates[i].ToString("dd MMMM yyyy")}");
+      Console.WriteLine($"Start Time: {sessionDates[i].ToString("hh:mm tt")}");
+      Console.WriteLine($"Duration: {sessionDurations[i]} minutes");
+      Console.WriteLine();
+    }
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -28,5 +45,7 @@
       240,
       180
     };
+
+    DisplayAllSessions(sessionNames, sessionDates, sessionDurations);
   }
 }
