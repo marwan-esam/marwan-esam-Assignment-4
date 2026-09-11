@@ -1,10 +1,14 @@
 ﻿using System.Buffers;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Data.Common;
+using System.Diagnostics;
+using System.Globalization;
 using System.Security.Cryptography;
-
+namespace AcademyScheduleAnalyzer;
 class Program
 {
-
+  
   public static void DisplaySession(string sessionName, DateTime sessionDate, int sessionDuration)
   {
     Console.WriteLine(sessionName);
@@ -35,6 +39,124 @@ class Program
     {
       Console.WriteLine("Session not found.");
     }
+
+    Console.WriteLine();
+  }
+
+  public static void SortSessionNames(string[] sessionNames)
+  {
+    string[] sessionNamesCopy = new string[sessionNames.Length];
+    Array.Copy(sessionNames, sessionNamesCopy,sessionNames.Length);
+    Array.Sort(sessionNamesCopy, StringComparer.CurrentCultureIgnoreCase);
+    for (int i = 0; i < sessionNamesCopy.Length; i++)
+    {
+      Console.WriteLine(sessionNamesCopy[i]);
+    }
+
+    Console.WriteLine();
+  }
+
+  public static void ReverseSessionNames(string[] sessionNames)
+  {
+    string[] sessionNamesCopy = new string[sessionNames.Length];
+    Array.Copy(sessionNames, sessionNamesCopy, sessionNames.Length);
+    Array.Reverse(sessionNamesCopy);
+    foreach (string name in sessionNamesCopy)
+    {
+      Console.WriteLine(name);
+    }
+
+    Console.WriteLine();
+  }
+
+  public static void FindSessionIndexUsingIndexOf(string[] sessionNames, string session)
+  {
+    int index = Array.IndexOf(sessionNames, session);
+    if (index != -1)
+    {
+      Console.WriteLine($"Index: {index}");
+    }
+    else
+    {
+      Console.WriteLine("Session not found.");
+    }
+
+    Console.WriteLine();
+  }
+
+  public static void CheckSessionExistsUsingExists(string[] sessionNames, string targetSession)
+  {
+    Predicate<string> isTargetSession = session => session == targetSession;
+    bool isFound = Array.Exists(sessionNames, isTargetSession);
+
+    if (isFound)
+    {
+      Console.WriteLine("Session exists.");
+    }
+    else
+    {
+      Console.WriteLine("Session does not exist.");
+    }
+
+    Console.WriteLine();
+  }
+
+  public static void CheckSessionExistsUsingFind(string[] sessionNames, string targetSession)
+  {
+    Predicate<string> isSessionFound = session => session == targetSession;
+    string? session = Array.Find(sessionNames, isSessionFound);
+
+    if (session != null)
+    {
+      Console.WriteLine(session);
+    }
+    else
+    {
+      Console.WriteLine("Session not found.");
+    }
+
+    Console.WriteLine();
+  }
+
+  public static void FindSessionIndexUsingFindIndex(string[] sessionNames, string targetSession)
+  {
+    Predicate<string> isSessionFound = session => session == targetSession;
+    int index = Array.FindIndex(sessionNames, isSessionFound);
+    if (index != -1)
+    {
+      Console.WriteLine($"Index: {index}");
+    }
+    else
+    {
+      Console.WriteLine("Session not found.");
+    }
+
+    Console.WriteLine();
+  }
+
+  public static void CopyArray(string[] sessionNames)
+  {
+    string[] sessionNamesCopy = new string[sessionNames.Length];
+    Array.Copy(sessionNames, sessionNamesCopy, sessionNames.Length);
+
+    Console.WriteLine("Changing first element to 'Python Basics' in the copied array...\n");
+    sessionNamesCopy[0] = "Python Basics";
+
+    Console.WriteLine("Original Array:-");
+    foreach (string name in sessionNames)
+    {
+      Console.WriteLine(name);
+    }
+
+    Console.WriteLine();
+    
+    Console.WriteLine("Copied Array:-");
+    foreach (string name in sessionNamesCopy)
+    {
+      Console.WriteLine(name);
+    }
+
+    Console.WriteLine();
   }
   public static void Main(string[] args)
   {
@@ -68,5 +190,19 @@ class Program
     DisplayAllSessions(sessionNames, sessionDates, sessionDurations);
 
     SearchSessionByName(sessionNames, sessionDates, sessionDurations, "something");
+    
+    SortSessionNames(sessionNames);
+    
+    ReverseSessionNames(sessionNames);
+    
+    FindSessionIndexUsingIndexOf(sessionNames, "Functions");
+    
+    CheckSessionExistsUsingExists(sessionNames, "python basics");
+    
+    CheckSessionExistsUsingFind(sessionNames, "C# Basics");
+    
+    FindSessionIndexUsingFindIndex(sessionNames, "Functions");
+    
+    CopyArray(sessionNames);
   }
 }
