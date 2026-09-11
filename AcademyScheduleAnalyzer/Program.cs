@@ -158,6 +158,57 @@ class Program
 
     Console.WriteLine();
   }
+
+  public static int GetTotalDuration(int[] sessionDurations)
+  {
+    int sum = 0;
+    foreach(int duration in sessionDurations)
+    {
+      sum += duration;
+    }
+    return sum;
+  }
+
+  public static double GetAverageDuration(int[] sessionDurations)
+  {
+    return GetTotalDuration(sessionDurations) / (double)sessionDurations.Length;
+  }
+
+  public static int GetShortestDuration(int[] sessionDurations)
+  {
+    int shortestDuration = sessionDurations[0];
+    foreach (int duration in sessionDurations)
+    {
+      if (duration < shortestDuration) shortestDuration = duration;
+    }
+
+    return shortestDuration;
+  }
+
+  public static int GetLongestDuration(int[] sessionDurations)
+  {
+    int largestDuration = sessionDurations[0];
+    foreach (int duration in sessionDurations)
+    {
+      if (duration > largestDuration) largestDuration = duration;
+    }
+
+    return largestDuration;
+  }
+
+  public static void SortSessionDurations(int[] sessionDurations)
+  {
+    int[] sessionDurationsCopy = new int[sessionDurations.Length];
+    Array.Copy(sessionDurations, sessionDurationsCopy, sessionDurations.Length);
+    Array.Sort(sessionDurationsCopy);
+
+    foreach (int duration in sessionDurationsCopy)
+    {
+      Console.WriteLine(duration);
+    }
+
+    Console.WriteLine();
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -204,5 +255,13 @@ class Program
     FindSessionIndexUsingFindIndex(sessionNames, "Functions");
     
     CopyArray(sessionNames);
+
+    Console.WriteLine($"Total Duration: {GetTotalDuration(sessionDurations)} minutes");
+    Console.WriteLine($"Average Duration: {GetAverageDuration(sessionDurations)} minutes");
+    Console.WriteLine($"Shortest Duration: {GetShortestDuration(sessionDurations)} minutes");
+    Console.WriteLine($"Longest Duration: {GetLongestDuration(sessionDurations)} minutes");
+    Console.WriteLine();
+    
+    SortSessionDurations(sessionDurations);
   }
 }
