@@ -232,6 +232,17 @@ class Program
   {
     arr[0] = 10;
   }
+
+  public static int CalculateTotalDurations(params int[] durations)
+  {
+    int sum = 0;
+    foreach (int duration in durations)
+    {
+      sum += duration;
+    }
+
+    return sum;
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -318,6 +329,14 @@ class Program
     {
       Console.WriteLine(val);
     }
+    Console.WriteLine();
+
+    int d1 = CalculateTotalDurations(120, 180);
+    int d2 = CalculateTotalDurations(120, 180, 240);
+    int d3 = CalculateTotalDurations(60, 90, 120, 180, 240);
+    Console.WriteLine($"Total Durations: {d1}");
+    Console.WriteLine($"Total Durations: {d2}");
+    Console.WriteLine($"Total Durations: {d3}");
     Console.WriteLine();
   }
 }
