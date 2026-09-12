@@ -209,6 +209,29 @@ class Program
 
     Console.WriteLine();
   }
+
+  public static void ChangeValueUsingRef(ref int value)
+  {
+    value = 10;
+  }
+
+  public static bool GetSessionIndexAndDurationUsingOut(string sessionName, string[] sessionNames, int[] sessionDurations
+    ,out int sessionIndex, out int sessionDuration)
+  {
+    sessionIndex = Array.IndexOf(sessionNames, sessionName);
+    if (sessionIndex != -1)
+    {
+      sessionDuration = sessionDurations[sessionIndex];
+      return true;
+    }
+    sessionDuration = -1;
+    return false;
+  }
+
+  public static void ChangeArrayElement(int[] arr)
+  {
+    arr[0] = 10;
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -263,5 +286,38 @@ class Program
     Console.WriteLine();
     
     SortSessionDurations(sessionDurations);
+
+    int valueToBeChangedUsingRef = 5;
+    Console.WriteLine($"Value before change: {valueToBeChangedUsingRef}");
+    ChangeValueUsingRef(ref valueToBeChangedUsingRef);
+    Console.WriteLine($"Value after change (using ref): {valueToBeChangedUsingRef}");
+    Console.WriteLine();
+
+    bool isSessionFound = GetSessionIndexAndDurationUsingOut("Date and Time", sessionNames, sessionDurations, out int sessionIndex, out int sessionDuration);
+    if (isSessionFound)
+    {
+      Console.WriteLine($"Index: {sessionIndex}");
+      Console.WriteLine($"Duration: {sessionDuration} minutes");
+    }
+    else
+    {
+      Console.WriteLine("Session not found.");
+    }
+    Console.WriteLine();
+
+    int[] sampleArray = { 1, 2, 3, 4 };
+    Console.WriteLine("Sample Array before function call:-");
+    foreach (int val in sampleArray)
+    {
+      Console.WriteLine(val);
+    }
+
+    ChangeArrayElement(sampleArray);
+    Console.WriteLine("Sample Array after function call:-");
+    foreach (int val in sampleArray)
+    {
+      Console.WriteLine(val);
+    }
+    Console.WriteLine();
   }
 }
