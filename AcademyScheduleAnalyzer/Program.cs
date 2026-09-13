@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.InteropServices.JavaScript;
 using System.Security.Cryptography;
 namespace AcademyScheduleAnalyzer;
 class Program
@@ -300,6 +301,17 @@ class Program
 
     Console.WriteLine();
   }
+
+  public static void DisplaySessionDatesStatus(string[] sessionNames, DateTime[] sessionDates)
+  {
+    for (int i = 0; i < sessionNames.Length; i++)
+    {
+      bool isDateUpcoming = sessionDates[i] > DateTime.Now;
+      Console.WriteLine($"{sessionNames[i]} {(isDateUpcoming ? "Upcoming" : "Past")}");
+    }
+
+    Console.WriteLine();
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -399,5 +411,7 @@ class Program
     DisplaySessionDateDetails(sessionNames, sessionDates, sessionDurations, "Arrays");
     
     DisplayDatesDifference(sessionNames, sessionDates, "C# Basics", "Arrays");
+    
+    DisplaySessionDatesStatus(sessionNames, sessionDates);
   }
 }
