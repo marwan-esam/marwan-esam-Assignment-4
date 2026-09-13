@@ -1,12 +1,4 @@
-﻿using System.Buffers;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Data.Common;
-using System.Diagnostics;
-using System.Globalization;
-using System.Runtime.InteropServices.JavaScript;
-using System.Security.Cryptography;
-namespace AcademyScheduleAnalyzer;
+﻿namespace AcademyScheduleAnalyzer;
 class Program
 {
   
@@ -312,6 +304,44 @@ class Program
 
     Console.WriteLine();
   }
+
+  public static void FindNextSession(string[] sessionNames, DateTime[] sessionDates)
+  {
+    int nextSessionIndex = -1;
+    DateTime? nextSessionDate = null;
+    DateTime currentTime = DateTime.Now;
+    
+    for (int i = 0; i < sessionDates.Length; i++)
+    {
+      if (sessionDates[i] > currentTime)
+      {
+        if (nextSessionDate == null || sessionDates[i] < nextSessionDate)
+        {
+          nextSessionDate = sessionDates[i];
+          nextSessionIndex = i;
+        }
+      }
+    }
+
+    if (nextSessionIndex != -1)
+    {
+      string nextSessionName = sessionNames[nextSessionIndex];
+      TimeSpan? timeRemaining = nextSessionDate - currentTime;
+      Console.WriteLine("Next Session:\n");
+      Console.WriteLine($"{nextSessionName}");
+      Console.WriteLine($"{nextSessionDate?.ToString("dd MMMM yyyy")}");
+      Console.WriteLine($"{nextSessionDate?.ToString("hh:mm tt")}");
+      Console.WriteLine("\nTime Remaining:");
+      Console.WriteLine($"{timeRemaining?.Days} days");
+      Console.WriteLine($"{timeRemaining?.Hours} hours");
+    }
+    else
+    {
+      Console.WriteLine("No upcoming session after current date and time.");
+    }
+
+    Console.WriteLine();
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -413,5 +443,7 @@ class Program
     DisplayDatesDifference(sessionNames, sessionDates, "C# Basics", "Arrays");
     
     DisplaySessionDatesStatus(sessionNames, sessionDates);
+    
+    FindNextSession(sessionNames, sessionDates);
   }
 }
