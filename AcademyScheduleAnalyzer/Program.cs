@@ -243,6 +243,35 @@ class Program
 
     return sum;
   }
+
+  public static int GetSessionIndex(string[] sessions, string targetSession)
+  {
+    int index = Array.IndexOf(sessions, targetSession);
+    return index;
+  }
+
+  public static void DisplaySessionDateDetails(string[] sessionNames, DateTime[] sessionDates, int[] sessionDurations, string session)
+  {
+    int index = GetSessionIndex(sessionNames, session);
+    if (index != -1)
+    {
+      Console.WriteLine($"Session: {sessionNames[index]}\n");
+      Console.WriteLine($"Date: {sessionDates[index].ToString("dd MMMM yyyy")}");
+      Console.WriteLine($"Day: {sessionDates[index].DayOfWeek}");
+      Console.WriteLine($"Year: {sessionDates[index].Year}");
+      Console.WriteLine($"Month: {sessionDates[index].Month}");
+      Console.WriteLine($"Day Number: {sessionDates[index].Day}");
+      Console.WriteLine($"Start Time: {sessionDates[index].ToString("hh:mm tt")}");
+      Console.WriteLine($"Duration: {sessionDurations[index]} minutes");
+      Console.WriteLine($"End Time: {sessionDates[index].AddMinutes(sessionDurations[index]).ToString("hh:mm tt")}");
+    }
+    else
+    {
+      Console.WriteLine("Session not found.");
+    }
+
+    Console.WriteLine();
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -338,5 +367,7 @@ class Program
     Console.WriteLine($"Total Durations: {d2}");
     Console.WriteLine($"Total Durations: {d3}");
     Console.WriteLine();
+    
+    DisplaySessionDateDetails(sessionNames, sessionDates, sessionDurations, "Arrays");
   }
 }
