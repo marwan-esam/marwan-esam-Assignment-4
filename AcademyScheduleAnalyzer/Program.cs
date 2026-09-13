@@ -272,6 +272,34 @@ class Program
 
     Console.WriteLine();
   }
+
+  public static void DisplayDatesDifference(string[] sessionNames, DateTime[] sessionDates, string firstSession,
+    string secondSession)
+  {
+    int firstSessionIndex = GetSessionIndex(sessionNames, firstSession);
+    int secondSessionIndex = GetSessionIndex(sessionNames, secondSession);
+    if (firstSessionIndex != -1 && secondSessionIndex != -1)
+    {
+      DateTime firstSessionDate = sessionDates[firstSessionIndex];
+      DateTime secondSessionDate = sessionDates[secondSessionIndex];
+      int isDateEarlier = DateTime.Compare(firstSessionDate, secondSessionDate);
+
+      TimeSpan dateDifference =
+        isDateEarlier < 0 ? secondSessionDate - firstSessionDate : firstSessionDate - secondSessionDate;
+      Console.WriteLine($"First Session: {sessionNames[firstSessionIndex]}");
+      Console.WriteLine($"Second Session: {sessionNames[secondSessionIndex]}");
+      Console.WriteLine();
+      Console.WriteLine("Difference:");
+      Console.WriteLine($"{dateDifference.TotalDays} days");
+      Console.WriteLine($"{dateDifference.TotalHours} hours");
+    }
+    else
+    {
+      Console.WriteLine("First Session and/or Second Session not found.");
+    }
+
+    Console.WriteLine();
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -369,5 +397,7 @@ class Program
     Console.WriteLine();
     
     DisplaySessionDateDetails(sessionNames, sessionDates, sessionDurations, "Arrays");
+    
+    DisplayDatesDifference(sessionNames, sessionDates, "C# Basics", "Arrays");
   }
 }
