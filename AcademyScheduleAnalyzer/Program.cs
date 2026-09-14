@@ -342,6 +342,25 @@ class Program
 
     Console.WriteLine();
   }
+
+  public static void DisplaySessionDateFormats(string sessionName, DateTime[] sessionDates, string[] sessionNames)
+  {
+    int index = Array.IndexOf(sessionNames, sessionName);
+    if (index != -1)
+    {
+      Console.WriteLine(sessionDates[index].ToString("yyyy-MM-dd"));
+      Console.WriteLine(sessionDates[index].ToString("dd/MM/yyyy"));
+      Console.WriteLine(sessionDates[index].ToString("dd MMMM yyyy"));
+      Console.WriteLine(sessionDates[index].ToString("dddd, dd MMMM yyyy"));
+      Console.WriteLine(sessionDates[index].ToString("hh:mm tt"));
+    }
+    else
+    {
+      Console.WriteLine("Session not found.");
+    }
+
+    Console.WriteLine();
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -445,5 +464,7 @@ class Program
     DisplaySessionDatesStatus(sessionNames, sessionDates);
     
     FindNextSession(sessionNames, sessionDates);
+    
+    DisplaySessionDateFormats("Arrays", sessionDates, sessionNames);
   }
 }
