@@ -1,4 +1,6 @@
-﻿namespace AcademyScheduleAnalyzer;
+﻿using System.Globalization;
+
+namespace AcademyScheduleAnalyzer;
 class Program
 {
   
@@ -361,6 +363,28 @@ class Program
 
     Console.WriteLine();
   }
+
+  public static DateTime ReadFormattedDate()
+  {
+    const string dateFormat = "yyyy-MM-dd HH:mm";
+    while (true)
+    {
+      Console.WriteLine($"Enter a date in this format ({dateFormat}): ");
+      string? unformattedDate = Console.ReadLine();
+      
+      bool isFormatCorrect = DateTime.TryParseExact(unformattedDate, dateFormat, null,
+        DateTimeStyles.None, out DateTime formattedDate);
+      if (isFormatCorrect)
+      {
+        Console.WriteLine("\nValid format. Date stored successfully.\n");
+        return formattedDate;
+      }
+
+      Console.WriteLine($"\nIncorrect Date Format. Please enter a date in the following format: {dateFormat}\n" +
+                        $"An example would be: {DateTime.Now.ToString(dateFormat)} (Note: hours must be entered in " +
+                        $"24-hour format.)\n");
+    }
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -466,5 +490,7 @@ class Program
     FindNextSession(sessionNames, sessionDates);
     
     DisplaySessionDateFormats("Arrays", sessionDates, sessionNames);
+
+    DateTime readDate = ReadFormattedDate();
   }
 }
