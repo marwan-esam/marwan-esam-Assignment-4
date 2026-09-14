@@ -385,6 +385,25 @@ class Program
                         $"24-hour format.)\n");
     }
   }
+
+  public static int HandleNumericInput()
+  {
+    while (true)
+    {
+      Console.Write("Choose an option: ");
+      string? unparsedInput = Console.ReadLine();
+      try
+      {
+        int parsedInput = int.Parse(unparsedInput);
+        return parsedInput;
+      }
+      catch (FormatException e)
+      {
+        Console.WriteLine("Invalid menu option. Enter a number");
+      }
+    }
+    
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -491,6 +510,8 @@ class Program
     
     DisplaySessionDateFormats("Arrays", sessionDates, sessionNames);
 
-    DateTime readDate = ReadFormattedDate();
+    // DateTime readDate = ReadFormattedDate();
+
+    int menuChoice = HandleNumericInput();
   }
 }
