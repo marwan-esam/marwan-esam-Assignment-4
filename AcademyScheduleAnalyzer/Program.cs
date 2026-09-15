@@ -562,5 +562,9 @@ class Program
     {
       Console.WriteLine(e.Message);
     }
+    finally
+    {
+      Console.WriteLine("Input operation finished.");
+    }
   }
 }
