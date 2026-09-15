@@ -404,6 +404,35 @@ class Program
     }
     
   }
+
+  public static string GetSessionName(string[] sessionNames)
+  {
+    while (true)
+    {
+      try
+      {
+        Console.Write("Enter session index: ");
+        int? index = int.Parse(Console.ReadLine());
+        string session = sessionNames[(int)index];
+        Console.WriteLine($"\nSession: {session}");
+        return session;
+      }
+      catch (IndexOutOfRangeException e) 
+      {
+        Console.WriteLine("The selected session index is out of range.");
+      }
+      catch (ArgumentNullException e)
+      {
+        Console.WriteLine($"Failed to process input. Error: {e.Message}");
+      }
+      catch (FormatException e)
+      {
+        Console.WriteLine("Invalid input format. please enter a number");
+      }
+
+      Console.WriteLine();
+    }
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -512,6 +541,8 @@ class Program
 
     // DateTime readDate = ReadFormattedDate();
 
-    int menuChoice = HandleNumericInput();
+    // int menuChoice = HandleNumericInput();
+
+    string sessionName = GetSessionName(sessionNames);
   }
 }
