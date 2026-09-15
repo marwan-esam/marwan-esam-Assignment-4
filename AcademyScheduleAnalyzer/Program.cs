@@ -594,11 +594,13 @@ class Program
     //   Console.WriteLine("Input operation finished.");
     // }
 
-    string stringReportResultUsingString = BuildScheduleReportUsingString(sessionNames, sessionDates, sessionDurations);
-    Console.WriteLine(stringReportResultUsingString);
-    Console.WriteLine();
-    string stringReportResultUsingStringBuilder =
-      BuildScheduleReportUsingStringBuilder(sessionNames, sessionDates, sessionDurations);
-    Console.WriteLine(stringReportResultUsingStringBuilder);
+    // string stringReportResultUsingString = BuildScheduleReportUsingString(sessionNames, sessionDates, sessionDurations);
+    // Console.WriteLine(stringReportResultUsingString);
+    // Console.WriteLine();
+    // string stringReportResultUsingStringBuilder =
+    //   BuildScheduleReportUsingStringBuilder(sessionNames, sessionDates, sessionDurations);
+    // Console.WriteLine(stringReportResultUsingStringBuilder);
+
+    BenchmarkDotNet.Running.BenchmarkRunner.Run<AcademyScheduleAnalyzer.Benchmarks.StringBenchmark>();
   }
 }
