@@ -433,6 +433,15 @@ class Program
       Console.WriteLine();
     }
   }
+
+  public static int ValidateSessionDuration()
+  {
+    Console.Write("Enter duration: ");
+    bool isValidDuration = int.TryParse(Console.ReadLine(), out int duration);
+    if (!isValidDuration || duration <= 0) throw new ArgumentException("Duration must be a number greater than zero.");
+    Console.WriteLine("Duration accepted.");
+    return duration;
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -543,6 +552,15 @@ class Program
 
     // int menuChoice = HandleNumericInput();
 
-    string sessionName = GetSessionName(sessionNames);
+    // string sessionName = GetSessionName(sessionNames);
+
+    try
+    {
+      int duration = ValidateSessionDuration();
+    }
+    catch (ArgumentException e)
+    {
+      Console.WriteLine(e.Message);
+    }
   }
 }
