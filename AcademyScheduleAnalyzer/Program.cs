@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text;
 
 namespace AcademyScheduleAnalyzer;
 class Program
@@ -454,6 +455,20 @@ class Program
 
     return result;
   }
+
+  public static string BuildScheduleReportUsingStringBuilder(string[] sessionNames, DateTime[] sessionDates,
+    int[] sessionDurations)
+  {
+    StringBuilder result = new StringBuilder();
+    int size = sessionNames.Length;
+    for (int i = 0; i < size; i++)
+    {
+      result.Append(
+        $"{sessionNames[i]} - {sessionDates[i].ToString("dd/MM/yyyy hh:mm tt")} - {sessionDurations[i]} minutes\n");
+    }
+
+    return result.ToString();
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -579,7 +594,11 @@ class Program
     //   Console.WriteLine("Input operation finished.");
     // }
 
-    string stringReportResult = BuildScheduleReportUsingString(sessionNames, sessionDates, sessionDurations);
-    Console.WriteLine(stringReportResult);
+    string stringReportResultUsingString = BuildScheduleReportUsingString(sessionNames, sessionDates, sessionDurations);
+    Console.WriteLine(stringReportResultUsingString);
+    Console.WriteLine();
+    string stringReportResultUsingStringBuilder =
+      BuildScheduleReportUsingStringBuilder(sessionNames, sessionDates, sessionDurations);
+    Console.WriteLine(stringReportResultUsingStringBuilder);
   }
 }
