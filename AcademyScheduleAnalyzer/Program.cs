@@ -442,6 +442,18 @@ class Program
     Console.WriteLine("Duration accepted.");
     return duration;
   }
+
+  public static string BuildScheduleReportUsingString(string[] sessionNames, DateTime[] sessionDates, int[] sessionDurations)
+  {
+    string result = "";
+    int size = sessionNames.Length;
+    for (int i = 0; i < size; i++)
+    {
+      result += $"{sessionNames[i]} - {sessionDates[i].ToString("dd/MM/yyyy hh:mm tt")} - {sessionDurations[i]} minutes\n";
+    }
+
+    return result;
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -554,17 +566,20 @@ class Program
 
     // string sessionName = GetSessionName(sessionNames);
 
-    try
-    {
-      int duration = ValidateSessionDuration();
-    }
-    catch (ArgumentException e)
-    {
-      Console.WriteLine(e.Message);
-    }
-    finally
-    {
-      Console.WriteLine("Input operation finished.");
-    }
+    // try
+    // {
+    //   int duration = ValidateSessionDuration();
+    // }
+    // catch (ArgumentException e)
+    // {
+    //   Console.WriteLine(e.Message);
+    // }
+    // finally
+    // {
+    //   Console.WriteLine("Input operation finished.");
+    // }
+
+    string stringReportResult = BuildScheduleReportUsingString(sessionNames, sessionDates, sessionDurations);
+    Console.WriteLine(stringReportResult);
   }
 }
