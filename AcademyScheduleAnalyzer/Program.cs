@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
 using System.Text;
+using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsTCPIP;
+using TraceReloggerLib;
 
 namespace AcademyScheduleAnalyzer;
 class Program
@@ -24,10 +26,13 @@ class Program
     }
   }
 
-  public static void SearchSessionByName(string[] sessionNames, DateTime[] sessionDates, int[] sessionDurations, string sessionName)
+  public static void SearchSessionByName(string[] sessionNames, DateTime[] sessionDates, int[] sessionDurations)
   {
-    Predicate<string> equalsTargetSession = name => name == sessionName;
-    int index = Array.FindIndex(sessionNames, 0, sessionNames.Length, equalsTargetSession);
+    Console.Write("Enter session name: ");
+    string? sessionName = Console.ReadLine();
+    Predicate<string> equalsTargetSession = name => name.Equals(sessionName, StringComparison.OrdinalIgnoreCase);
+    
+    int index = Array.FindIndex(sessionNames, equalsTargetSession);
     if(index != -1)
     {
       DisplaySession(sessionNames[index], sessionDates[index], sessionDurations[index]);
@@ -35,8 +40,6 @@ class Program
     {
       Console.WriteLine("Session not found.");
     }
-
-    Console.WriteLine();
   }
 
   public static void SortSessionNames(string[] sessionNames)
@@ -48,8 +51,6 @@ class Program
     {
       Console.WriteLine(sessionNamesCopy[i]);
     }
-
-    Console.WriteLine();
   }
 
   public static void ReverseSessionNames(string[] sessionNames)
@@ -61,8 +62,6 @@ class Program
     {
       Console.WriteLine(name);
     }
-
-    Console.WriteLine();
   }
 
   public static void FindSessionIndexUsingIndexOf(string[] sessionNames, string session)
@@ -80,21 +79,27 @@ class Program
     Console.WriteLine();
   }
 
-  public static void CheckSessionExistsUsingExists(string[] sessionNames, string targetSession)
+  public static void CheckSessionExistsUsingExists(string[] sessionNames)
   {
-    Predicate<string> isTargetSession = session => session == targetSession;
-    bool isFound = Array.Exists(sessionNames, isTargetSession);
-
-    if (isFound)
+    Console.Write("Enter session name: ");
+    string? targetSession = Console.ReadLine();
+    Predicate<string> isTargetSession = session => session.Equals(targetSession, StringComparison.OrdinalIgnoreCase);
+    try
     {
-      Console.WriteLine("Session exists.");
+      bool isFound = Array.Exists(sessionNames, isTargetSession);
+      if (isFound)
+      {
+        Console.WriteLine("Session exists.");
+      }
+      else
+      {
+        Console.WriteLine("Session does not exist.");
+      }
     }
-    else
+    catch (ArgumentNullException e)
     {
-      Console.WriteLine("Session does not exist.");
+      Console.WriteLine("Cannot process array/input");
     }
-
-    Console.WriteLine();
   }
 
   public static void CheckSessionExistsUsingFind(string[] sessionNames, string targetSession)
@@ -114,9 +119,11 @@ class Program
     Console.WriteLine();
   }
 
-  public static void FindSessionIndexUsingFindIndex(string[] sessionNames, string targetSession)
+  public static void FindSessionIndexUsingFindIndex(string[] sessionNames)
   {
-    Predicate<string> isSessionFound = session => session == targetSession;
+    Console.Write("Enter session name: ");
+    string? targetSession = Console.ReadLine();
+    Predicate<string> isSessionFound = session => session.Equals(targetSession, StringComparison.OrdinalIgnoreCase);
     int index = Array.FindIndex(sessionNames, isSessionFound);
     if (index != -1)
     {
@@ -126,8 +133,6 @@ class Program
     {
       Console.WriteLine("Session not found.");
     }
-
-    Console.WriteLine();
   }
 
   public static void CopyArray(string[] sessionNames)
@@ -240,61 +245,76 @@ class Program
     return sum;
   }
 
-  public static int GetSessionIndex(string[] sessions, string targetSession)
+  public static int GetSessionIndex(string[] sessions, string? targetSession)
   {
-    int index = Array.IndexOf(sessions, targetSession);
+    int index = Array.FindIndex(sessions, session => session.Equals(targetSession, StringComparison.OrdinalIgnoreCase));
     return index;
   }
 
-  public static void DisplaySessionDateDetails(string[] sessionNames, DateTime[] sessionDates, int[] sessionDurations, string session)
+  public static void DisplaySessionDateDetails(string[] sessionNames, DateTime[] sessionDates, int[] sessionDurations)
   {
-    int index = GetSessionIndex(sessionNames, session);
-    if (index != -1)
+    Console.Write("Enter session name: ");
+    string? session = Console.ReadLine();
+    try
     {
-      Console.WriteLine($"Session: {sessionNames[index]}\n");
-      Console.WriteLine($"Date: {sessionDates[index].ToString("dd MMMM yyyy")}");
-      Console.WriteLine($"Day: {sessionDates[index].DayOfWeek}");
-      Console.WriteLine($"Year: {sessionDates[index].Year}");
-      Console.WriteLine($"Month: {sessionDates[index].Month}");
-      Console.WriteLine($"Day Number: {sessionDates[index].Day}");
-      Console.WriteLine($"Start Time: {sessionDates[index].ToString("hh:mm tt")}");
-      Console.WriteLine($"Duration: {sessionDurations[index]} minutes");
-      Console.WriteLine($"End Time: {sessionDates[index].AddMinutes(sessionDurations[index]).ToString("hh:mm tt")}");
+      int index = GetSessionIndex(sessionNames, session);
+      if (index != -1)
+      {
+        Console.WriteLine($"Session: {sessionNames[index]}\n");
+        Console.WriteLine($"Date: {sessionDates[index].ToString("dd MMMM yyyy")}");
+        Console.WriteLine($"Day: {sessionDates[index].DayOfWeek}");
+        Console.WriteLine($"Year: {sessionDates[index].Year}");
+        Console.WriteLine($"Month: {sessionDates[index].Month}");
+        Console.WriteLine($"Day Number: {sessionDates[index].Day}");
+        Console.WriteLine($"Start Time: {sessionDates[index].ToString("hh:mm tt")}");
+        Console.WriteLine($"Duration: {sessionDurations[index]} minutes");
+        Console.WriteLine($"End Time: {sessionDates[index].AddMinutes(sessionDurations[index]).ToString("hh:mm tt")}");
+      }
+      else
+      {
+        Console.WriteLine("Session not found.");
+      }
     }
-    else
+    catch (ArgumentNullException e)
     {
-      Console.WriteLine("Session not found.");
+      Console.WriteLine("Cannot process array/input");
     }
-
-    Console.WriteLine();
   }
 
-  public static void DisplayDatesDifference(string[] sessionNames, DateTime[] sessionDates, string firstSession,
-    string secondSession)
+  public static void DisplayDatesDifference(string[] sessionNames, DateTime[] sessionDates)
   {
-    int firstSessionIndex = GetSessionIndex(sessionNames, firstSession);
-    int secondSessionIndex = GetSessionIndex(sessionNames, secondSession);
-    if (firstSessionIndex != -1 && secondSessionIndex != -1)
+    Console.Write("Enter first session name: ");
+    string? firstSession = Console.ReadLine();
+    Console.Write("Enter second session name: ");
+    string? secondSession = Console.ReadLine();
+    try
     {
-      DateTime firstSessionDate = sessionDates[firstSessionIndex];
-      DateTime secondSessionDate = sessionDates[secondSessionIndex];
-      int isDateEarlier = DateTime.Compare(firstSessionDate, secondSessionDate);
+      int firstSessionIndex = GetSessionIndex(sessionNames, firstSession);
+      int secondSessionIndex = GetSessionIndex(sessionNames, secondSession);
+      if (firstSessionIndex != -1 && secondSessionIndex != -1)
+      {
+        DateTime firstSessionDate = sessionDates[firstSessionIndex];
+        DateTime secondSessionDate = sessionDates[secondSessionIndex];
+        int isDateEarlier = DateTime.Compare(firstSessionDate, secondSessionDate);
 
-      TimeSpan dateDifference =
-        isDateEarlier < 0 ? secondSessionDate - firstSessionDate : firstSessionDate - secondSessionDate;
-      Console.WriteLine($"First Session: {sessionNames[firstSessionIndex]}");
-      Console.WriteLine($"Second Session: {sessionNames[secondSessionIndex]}");
-      Console.WriteLine();
-      Console.WriteLine("Difference:");
-      Console.WriteLine($"{dateDifference.TotalDays} days");
-      Console.WriteLine($"{dateDifference.TotalHours} hours");
+        TimeSpan dateDifference =
+          isDateEarlier < 0 ? secondSessionDate - firstSessionDate : firstSessionDate - secondSessionDate;
+        Console.WriteLine($"First Session: {sessionNames[firstSessionIndex]}");
+        Console.WriteLine($"Second Session: {sessionNames[secondSessionIndex]}");
+        Console.WriteLine();
+        Console.WriteLine("Difference:");
+        Console.WriteLine($"{dateDifference.TotalDays} days");
+        Console.WriteLine($"{dateDifference.TotalHours} hours");
+      }
+      else
+      {
+        Console.WriteLine("First Session and/or Second Session not found.");
+      }
     }
-    else
+    catch (ArgumentNullException e)
     {
-      Console.WriteLine("First Session and/or Second Session not found.");
+      Console.WriteLine("Cannot process array/input");
     }
-
-    Console.WriteLine();
   }
 
   public static void DisplaySessionDatesStatus(string[] sessionNames, DateTime[] sessionDates)
@@ -304,8 +324,6 @@ class Program
       bool isDateUpcoming = sessionDates[i] > DateTime.Now;
       Console.WriteLine($"{sessionNames[i]} {(isDateUpcoming ? "Upcoming" : "Past")}");
     }
-
-    Console.WriteLine();
   }
 
   public static void FindNextSession(string[] sessionNames, DateTime[] sessionDates)
@@ -342,8 +360,6 @@ class Program
     {
       Console.WriteLine("No upcoming session after current date and time.");
     }
-
-    Console.WriteLine();
   }
 
   public static void DisplaySessionDateFormats(string sessionName, DateTime[] sessionDates, string[] sessionNames)
@@ -370,7 +386,7 @@ class Program
     const string dateFormat = "yyyy-MM-dd HH:mm";
     while (true)
     {
-      Console.WriteLine($"Enter a date in this format ({dateFormat}): ");
+      Console.Write($"Enter a date in this format ({dateFormat}): ");
       string? unformattedDate = Console.ReadLine();
       
       bool isFormatCorrect = DateTime.TryParseExact(unformattedDate, dateFormat, null,
@@ -391,16 +407,21 @@ class Program
   {
     while (true)
     {
-      Console.Write("Choose an option: ");
       string? unparsedInput = Console.ReadLine();
       try
       {
         int parsedInput = int.Parse(unparsedInput);
+        if (parsedInput < 0 || parsedInput > 16)
+        {
+          throw new InvalidDataException();
+        }
+
         return parsedInput;
       }
-      catch (FormatException e)
+      catch (Exception e) when (e is FormatException || e is InvalidDataException)
       {
-        Console.WriteLine("Invalid menu option. Enter a number");
+        Console.WriteLine("Invalid menu option. Enter an integer between 0 and 16");
+        Console.Write("Enter a correct option: ");
       }
     }
     
@@ -413,14 +434,15 @@ class Program
       try
       {
         Console.Write("Enter session index: ");
-        int? index = int.Parse(Console.ReadLine());
+        int? index = int.Parse(Console.ReadLine()!);
         string session = sessionNames[(int)index];
         Console.WriteLine($"\nSession: {session}");
         return session;
       }
-      catch (IndexOutOfRangeException e) 
+      catch (IndexOutOfRangeException e)
       {
-        Console.WriteLine("The selected session index is out of range.");
+        Console.WriteLine(
+          $"The selected session index is out of range. Correct range is from 0 to {sessionNames.Length - 1}");
       }
       catch (ArgumentNullException e)
       {
@@ -430,8 +452,10 @@ class Program
       {
         Console.WriteLine("Invalid input format. please enter a number");
       }
-
-      Console.WriteLine();
+      finally
+      {
+        Console.WriteLine("Input operation finished.");
+      }
     }
   }
 
@@ -439,7 +463,7 @@ class Program
   {
     Console.Write("Enter duration: ");
     bool isValidDuration = int.TryParse(Console.ReadLine(), out int duration);
-    if (!isValidDuration || duration <= 0) throw new ArgumentException("Duration must be a number greater than zero.");
+    if (!isValidDuration || duration <= 0) throw new ArgumentException("Duration must be an integer greater than zero.");
     Console.WriteLine("Duration accepted.");
     return duration;
   }
@@ -469,6 +493,14 @@ class Program
 
     return result.ToString();
   }
+
+  public static void DisplayDurationStatistics(int[] sessionDurations)
+  {
+    Console.WriteLine($"Total duration: {GetTotalDuration(sessionDurations)}");
+    Console.WriteLine($"Longest duration: {GetLongestDuration(sessionDurations)}");
+    Console.WriteLine($"Shortest duration: {GetShortestDuration(sessionDurations)}");
+    Console.WriteLine($"Average duration: {GetAverageDuration(sessionDurations)}");
+  }
   public static void Main(string[] args)
   {
     string[] sessionNames =
@@ -497,110 +529,108 @@ class Program
       240,
       180
     };
+    
+    string menu = """
+                  ===================================
+                  Academy Schedule Analyzer
+                  ===================================
+                  1. Display all sessions
+                  2. Search for a session
+                  3. Sort session names
+                  4. Reverse session names
+                  5. Find session index
+                  6. Check if session exists
+                  7. Show duration statistics
+                  8. Show session date details
+                  9. Show past and upcoming sessions
+                  10. Find next session
+                  11. Compare two session dates
+                  12. Read and validate a custom date
+                  13. Select session by index
+                  14. Validate session duration
+                  15. Generate report using string
+                  16. Generate report using StringBuilder
+                  0. Exit
 
-    DisplayAllSessions(sessionNames, sessionDates, sessionDurations);
-
-    SearchSessionByName(sessionNames, sessionDates, sessionDurations, "something");
-    
-    SortSessionNames(sessionNames);
-    
-    ReverseSessionNames(sessionNames);
-    
-    FindSessionIndexUsingIndexOf(sessionNames, "Functions");
-    
-    CheckSessionExistsUsingExists(sessionNames, "python basics");
-    
-    CheckSessionExistsUsingFind(sessionNames, "C# Basics");
-    
-    FindSessionIndexUsingFindIndex(sessionNames, "Functions");
-    
-    CopyArray(sessionNames);
-
-    Console.WriteLine($"Total Duration: {GetTotalDuration(sessionDurations)} minutes");
-    Console.WriteLine($"Average Duration: {GetAverageDuration(sessionDurations)} minutes");
-    Console.WriteLine($"Shortest Duration: {GetShortestDuration(sessionDurations)} minutes");
-    Console.WriteLine($"Longest Duration: {GetLongestDuration(sessionDurations)} minutes");
-    Console.WriteLine();
-    
-    SortSessionDurations(sessionDurations);
-
-    int valueToBeChangedUsingRef = 5;
-    Console.WriteLine($"Value before change: {valueToBeChangedUsingRef}");
-    ChangeValueUsingRef(ref valueToBeChangedUsingRef);
-    Console.WriteLine($"Value after change (using ref): {valueToBeChangedUsingRef}");
-    Console.WriteLine();
-
-    bool isSessionFound = GetSessionIndexAndDurationUsingOut("Date and Time", sessionNames, sessionDurations, out int sessionIndex, out int sessionDuration);
-    if (isSessionFound)
+                  Choose an option: 
+                  """;
+    bool isRunning = true;
+    while (isRunning)
     {
-      Console.WriteLine($"Index: {sessionIndex}");
-      Console.WriteLine($"Duration: {sessionDuration} minutes");
+      Console.Write(menu);
+      int choice = HandleNumericInput();
+      Console.WriteLine();
+      switch (choice)
+      {
+        case 0:
+          Console.WriteLine("Exiting application...");
+          isRunning = false;
+          break;
+        case 1:
+          DisplayAllSessions(sessionNames, sessionDates, sessionDurations);
+          break;
+        case 2:
+          SearchSessionByName(sessionNames, sessionDates, sessionDurations);
+          break;
+        case 3:
+          SortSessionNames(sessionNames);
+          break;
+        case 4:
+          ReverseSessionNames(sessionNames);
+          break;
+        case 5:
+          FindSessionIndexUsingFindIndex(sessionNames);
+          break;
+        case 6:
+          CheckSessionExistsUsingExists(sessionNames);
+          break;
+        case 7:
+          DisplayDurationStatistics(sessionDurations);
+          break;
+        case 8:
+          DisplaySessionDateDetails(sessionNames, sessionDates, sessionDurations);
+          break;
+        case 9:
+          DisplaySessionDatesStatus(sessionNames, sessionDates);
+          break;
+        case 10:
+          FindNextSession(sessionNames, sessionDates);
+          break;
+        case 11:
+          DisplayDatesDifference(sessionNames, sessionDates);
+          break;
+        case 12:
+          ReadFormattedDate();
+          break;
+        case 13:
+          GetSessionName(sessionNames);
+          break;
+        case 14:
+          try
+          {
+            int duration = ValidateSessionDuration();
+            Console.WriteLine($"{duration} is a valid duration");
+          }
+          catch (ArgumentException e)
+          {
+            Console.WriteLine(e.Message);
+          }
+
+          break;
+        case 15:
+          Console.WriteLine(BuildScheduleReportUsingString(sessionNames, sessionDates, sessionDurations));
+          break;
+        case 16:
+          Console.WriteLine(BuildScheduleReportUsingStringBuilder(sessionNames, sessionDates, sessionDurations));
+          break;
+      }
+
+      if (isRunning)
+      {
+        Console.WriteLine("\nPress any key to return to the menu...");
+        Console.ReadKey();
+        Console.Clear();
+      }
     }
-    else
-    {
-      Console.WriteLine("Session not found.");
-    }
-    Console.WriteLine();
-
-    int[] sampleArray = { 1, 2, 3, 4 };
-    Console.WriteLine("Sample Array before function call:-");
-    foreach (int val in sampleArray)
-    {
-      Console.WriteLine(val);
-    }
-
-    ChangeArrayElement(sampleArray);
-    Console.WriteLine("Sample Array after function call:-");
-    foreach (int val in sampleArray)
-    {
-      Console.WriteLine(val);
-    }
-    Console.WriteLine();
-
-    int d1 = CalculateTotalDurations(120, 180);
-    int d2 = CalculateTotalDurations(120, 180, 240);
-    int d3 = CalculateTotalDurations(60, 90, 120, 180, 240);
-    Console.WriteLine($"Total Durations: {d1}");
-    Console.WriteLine($"Total Durations: {d2}");
-    Console.WriteLine($"Total Durations: {d3}");
-    Console.WriteLine();
-    
-    DisplaySessionDateDetails(sessionNames, sessionDates, sessionDurations, "Arrays");
-    
-    DisplayDatesDifference(sessionNames, sessionDates, "C# Basics", "Arrays");
-    
-    DisplaySessionDatesStatus(sessionNames, sessionDates);
-    
-    FindNextSession(sessionNames, sessionDates);
-    
-    DisplaySessionDateFormats("Arrays", sessionDates, sessionNames);
-
-    // DateTime readDate = ReadFormattedDate();
-
-    // int menuChoice = HandleNumericInput();
-
-    // string sessionName = GetSessionName(sessionNames);
-
-    // try
-    // {
-    //   int duration = ValidateSessionDuration();
-    // }
-    // catch (ArgumentException e)
-    // {
-    //   Console.WriteLine(e.Message);
-    // }
-    // finally
-    // {
-    //   Console.WriteLine("Input operation finished.");
-    // }
-
-    // string stringReportResultUsingString = BuildScheduleReportUsingString(sessionNames, sessionDates, sessionDurations);
-    // Console.WriteLine(stringReportResultUsingString);
-    // Console.WriteLine();
-    // string stringReportResultUsingStringBuilder =
-    //   BuildScheduleReportUsingStringBuilder(sessionNames, sessionDates, sessionDurations);
-    // Console.WriteLine(stringReportResultUsingStringBuilder);
-
-    BenchmarkDotNet.Running.BenchmarkRunner.Run<AcademyScheduleAnalyzer.Benchmarks.StringBenchmark>();
   }
 }
